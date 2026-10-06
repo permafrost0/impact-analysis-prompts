@@ -1,0 +1,20 @@
+# 設計書(社内の資料なので、リポジトリに入れない)
+input/target/*
+!input/target/.gitkeep
+input/reference/*
+!input/reference/.gitkeep
+
+# 調査の作業フォルダと成果物(各自の PC の中だけで使う)
+work/runs/*
+!work/runs/.gitkeep
+
+# 差し戻し・修正の蓄積(各自の PC の中だけで使う)
+history/*
+!history/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+
+# Excel の一時ファイル
+~$*
