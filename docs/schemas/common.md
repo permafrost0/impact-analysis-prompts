@@ -79,7 +79,7 @@ YAML がエージェント同士のやり取りの正本です。`.md` はスク
 | 設計書のセル | `sheet:{ブック}/{シート}#L{行}` または `#L{行}-L{行}` | `sheet:機能設計書_ユーザー登録/画面項目定義#L27` |
 | 設計書の図形 | `sheet:{ブック}/{シート}#S{番号}` | `sheet:機能設計書_ユーザー登録/画面レイアウト#S2` |
 | 参照先の見出し | `heading:{ブック}/{シート}#L{行}` | `heading:会員管理設計書/処理仕様#L30` |
-| コード | `code:{ソースのルートからの相対パス}:{行}` または `:{行}-{行}` | `code:src/main/java/com/example/user/UserService.java:22` |
+| コード | `code:{ソースのフォルダ(source_root)からの相対パス}:{行}` または `:{行}-{行}` | `code:src/main/java/com/example/user/UserService.java:22` |
 
 {ブック}は拡張子なしのファイル名です。**既存の振る舞い・修正箇所・影響の根拠は、必ず `code:` です。**
 
@@ -89,7 +89,7 @@ YAML がエージェント同士のやり取りの正本です。`.md` はスク
 
 ```yaml
 excerpt:
-  file: src/main/java/com/example/user/UserForm.java   # ソースのルートからの相対パス
+  file: src/main/java/com/example/user/UserForm.java   # ソースのフォルダ(source_root)からの相対パス
   start: 18
   end: 24        # start から最大40行まで
 ```

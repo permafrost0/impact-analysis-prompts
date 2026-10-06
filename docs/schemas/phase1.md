@@ -7,7 +7,7 @@
 ```yaml
 run_id: 20261007-usertel
 title: ユーザー登録への電話番号認証の追加
-source_root: C:/work/app            # 調査対象のソースのルート
+source_root: input/source/myapp     # 調査するソースのフォルダ(input/source/ の下。相対パスで書く)
 design_docs:                        # input/target/ に置かれた、追加開発の設計書
   - file: 機能設計書_ユーザー登録.xlsx
     sheets: [画面項目定義, イベント一覧, 処理仕様, メッセージ一覧]   # 指示されたシート("*" は全シート)

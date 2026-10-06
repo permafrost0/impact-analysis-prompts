@@ -4,6 +4,10 @@ input/target/*
 input/reference/*
 !input/reference/.gitkeep
 
+# input/source/(調査するソースの置き場所)は、あえてここに書いていない。
+# .gitignore に書くと、Copilot のテキスト検索の対象から外れ、エージェントがソースを検索できなくなるため。
+# このフォルダを git で管理している場合は、input/source/ の中身をコミットしないこと。
+
 # 調査の作業フォルダと成果物(各自の PC の中だけで使う)
 work/runs/*
 !work/runs/.gitkeep

@@ -69,13 +69,26 @@ def table(header, rows):
     return out
 
 
+
+def resolve_source_root(value):
+    """scope.yaml の source_root(例: input/source/myapp)を実際のフォルダにする。
+    相対パスは、今いるフォルダ → このリポジトリのフォルダ(tools/ の1つ上)の順に探す。"""
+    if not value:
+        return None
+    p = Path(str(value))
+    if p.is_absolute():
+        return p
+    for base in (Path.cwd(), Path(__file__).resolve().parent.parent):
+        if (base / p).exists():
+            return base / p
+    return Path.cwd() / p
+
 class Doc:
     def __init__(self, run):
         self.run = Path(run)
         self.cache = {}
         self.scope = self.load("scope.yaml") or {}
-        root = self.scope.get("source_root")
-        self.source_root = Path(str(root)) if root else None
+        self.source_root = resolve_source_root(self.scope.get("source_root"))
         self.decisions = self.lst(self.load("decisions.yaml"), "items")
         self.questions = []          # [{q, source, feature, text, examples, answered}]
         self.qmap = {}               # 項目 ID → [Q番号]

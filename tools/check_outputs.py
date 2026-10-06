@@ -65,6 +65,20 @@ def safe_name(name):
     return re.sub(r'[\\/:*?"<>|]', "_", name).strip() or "sheet"
 
 
+
+def resolve_source_root(value):
+    """scope.yaml の source_root(例: input/source/myapp)を実際のフォルダにする。
+    相対パスは、今いるフォルダ → このリポジトリのフォルダ(tools/ の1つ上)の順に探す。"""
+    if not value:
+        return None
+    p = Path(str(value))
+    if p.is_absolute():
+        return p
+    for base in (Path.cwd(), Path(__file__).resolve().parent.parent):
+        if (base / p).exists():
+            return base / p
+    return Path.cwd() / p
+
 class Checker:
     def __init__(self, run):
         self.run = Path(run)
@@ -73,9 +87,7 @@ class Checker:
         self.sheet_cache = {}
         self.code_cache = {}
         self.scope = self.load("scope.yaml", required=False) or {}
-        self.source_root = Path(str(self.scope.get("source_root", ""))) if self.scope.get("source_root") else None
-        if self.source_root and not self.source_root.is_absolute():
-            self.source_root = (Path.cwd() / self.source_root)
+        self.source_root = resolve_source_root(self.scope.get("source_root"))
         self.source_warned = False
 
     # ---------- 出力 ----------
@@ -1074,8 +1086,17 @@ class Checker:
                         self.err(f, f"ID {i} が {seen[i]} と重複しています")
                     seen.setdefault(i, f)
 
+    def check_scope_source(self):
+        v = str(self.scope.get("source_root") or "").replace("\\", "/").rstrip("/")
+        if not re.fullmatch(r"input/source/[^/]+", v):
+            self.err("scope.yaml", f"source_root は input/source/{{フォルダ名}} の形で書きます(今: {v or '空'})。"
+                                   f"ソースは input/source/ の下に置く決まりです")
+        elif not (self.source_root and self.source_root.is_dir()):
+            self.err("scope.yaml", f"ソースのフォルダがありません: {v}")
+
     def checkpoint(self, cp):
         self.build_index()
+        self.check_scope_source()
         self.check_decisions()
         if cp == "p1-scope":
             self.check_scope_resolution("01_requirements/scope_resolution.yaml")

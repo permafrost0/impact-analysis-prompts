@@ -3,7 +3,7 @@
 
 使い方:
     調査の開始時に、基準を記録する:
-        python tools/guard.py record <調査フォルダ> --path <ソースのルート> --path input/target --path input/reference
+        python tools/guard.py record <調査フォルダ> --path input/source/<フォルダ名> --path input/target --path input/reference
     各フェーズの終わりに、基準と照合する:
         python tools/guard.py verify <調査フォルダ>
 

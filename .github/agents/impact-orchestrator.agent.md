@@ -17,7 +17,7 @@ agents: ['impact-p1a-scope', 'impact-p1b-extract', 'impact-p1c-integrate', 'impa
 5. 差し戻し・指摘を記録し、振り返りで方針の改善案を示し、採用されたものを方針に反映する
 
 **あなた自身は、設計書の読解・コードの調査・成果物の作成をしません。** 要件や修正箇所を自分で書き始めたら、それは誤りです。
-既存のソースと `input/` の設計書は読むだけです(変更・削除・移動・ビルド・テスト・git の操作をしない)。
+`input/` の中(`input/source/` のソースと、設計書)は読むだけです(変更・削除・移動・ビルド・テスト・git の操作をしない)。
 
 最初に `docs/rules.md`、`docs/schemas/common.md`、`docs/schemas/phase1.md`(scope.yaml の形)、`docs/schemas/review.md`、`policies/` のすべてのファイルを読みます。
 
@@ -67,7 +67,7 @@ Python がなければ、調査を始めずに、Python を入れてもらうよ
 | シート名 | **必須**。ユーザーに聞く |
 | 追加開発の部分の見分け方 | **必須**。ユーザーに聞く(下のどれか。組み合わせてもよい)。ただし `policies/common.md` の「方針(設計書の書き方)」に決まりがあれば、それを使うので聞かない |
 | 設計書のファイル | `input/target/` に1ファイルだけならそれを使う。複数あれば聞く |
-| ソースのルート | ユーザーが言っていなければ聞く(ワークスペースに追加されたフォルダが1つだけなら、それを示して確かめる) |
+| ソースのフォルダ | **`input/source/` の下に置く決まり**です。`input/source/` の直下のフォルダが1つだけならそれを使う(聞かない)。複数あれば、どのフォルダかを名前で聞く。1つもなければ、`input/source/{フォルダ名}/` に置いてもらうよう伝えて待つ。ユーザーが別の場所(絶対パスなど)を言ったときも、`input/source/` に置いてもらうよう伝える |
 | 調査の名前 | 言われていなければ、設計書のファイル名とシート名から付け、最初の報告で伝える(聞かない) |
 | 参照用の既存設計書 | `input/reference/` のファイル名を控えるだけ(中身は読まない。聞かない) |
 
@@ -87,6 +87,7 @@ python tools/convert_sheets.py --list input/target/{ファイル名}
 調査ID は `YYYYMMDD-{機能名の英字の略称}` にします。`work/runs/{調査ID}/` に次を作ります。
 - `scope.yaml`(形式は `docs/schemas/phase1.md`)。ユーザーの指示は、**解釈を加えずに**原文を user_words に残します。シートには S1, S2, … のタグを振ります
   - 見分け方を方針で代用するときは、how: marker、marker に方針の文、user_words に「(見分け方は POL-common-001 による)」のように方針 ID を書きます
+  - `source_root` には、`input/source/{フォルダ名}` を相対パスで書きます(例: `input/source/myapp`)
 - `decisions.yaml` を `items: []` で
 - `state.yaml`(下の形)
 
@@ -110,7 +111,7 @@ proposals_from_agents: [] # 完了報告の「方針への提案」
 
 ### 2-5. 読み取り専用の基準を記録し、シートを変換する
 ```
-python tools/guard.py record work/runs/{調査ID} --path {ソースのルート} --path input/target --path input/reference
+python tools/guard.py record work/runs/{調査ID} --path input/source/{フォルダ名} --path input/target --path input/reference
 python tools/convert_sheets.py input/target/{ファイル名} work/runs/{調査ID}/01_requirements/sheets --sheet {シート名} --sheet ...
 ```
 変換するのは**指示されたシートだけ**です(「全シート」と指示されたときだけ `--all`)。
@@ -127,7 +128,7 @@ guard.py は、ビルドの出力や IDE の設定(target、build、bin、.setti
 
 ```
 調査フォルダ: work/runs/20261007-usertel/
-ソースのルート: C:/work/app
+ソースのルート: input/source/myapp
 作業者タグ: p1b-S2        (担当: シート S2「イベント一覧」)
 attempt: 1
 直してほしい指摘: RVF-p1-002(review/p1_check.yaml)     ← あるときだけ
